@@ -6,6 +6,8 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
+	"os"
+	"path/filepath"
 )
 
 var Cfg *ini.File
@@ -13,14 +15,18 @@ var Config model.Config
 
 func InitConfig() {
 	var err error
-	Cfg, err = ini.Load("F:\\code\\goalong\\抖音\\gogogo-dy\\config\\config.ini")
+	// 获取当前工作目录
+	currentDir, _ := os.Getwd()
+
+	// 构建配置文件的绝对路径
+	configPath := filepath.Join(currentDir, "config/config.ini")
+	Cfg, err = ini.Load(configPath)
 	if err != nil {
 		log.Fatalf("Fail to parse 'config.ini': %v", err)
 	}
 
 	loadApp()
 	loadMysql()
-
 }
 
 func loadApp() {
