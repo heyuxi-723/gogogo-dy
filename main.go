@@ -1,8 +1,11 @@
 package main
 
 import (
+	"github.com/RaymondCode/simple-demo/config"
+	"github.com/RaymondCode/simple-demo/router"
 	"github.com/RaymondCode/simple-demo/service"
 	"github.com/gin-gonic/gin"
+	"log"
 )
 
 func main() {
@@ -10,7 +13,10 @@ func main() {
 
 	r := gin.Default()
 
-	initRouter(r)
+	router.InitRouter(r)
+	config.InitConfig()
 
-	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	if err := r.Run(":" + config.Config.Port); err != nil {
+		log.Fatalf("启动服务失败")
+	}
 }

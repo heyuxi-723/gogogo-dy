@@ -3,9 +3,12 @@ module github.com/RaymondCode/simple-demo
 go 1.17
 
 require (
+	github.com/RaymondCode/simple-demo v0.0.0-20230221080337-89b8c9434e04
 	github.com/gavv/httpexpect/v2 v2.8.0
 	github.com/gin-gonic/gin v1.7.7
+	github.com/jinzhu/gorm v1.9.16
 	github.com/stretchr/testify v1.7.0
+	gopkg.in/ini.v1 v1.67.0
 )
 
 require (
@@ -17,10 +20,13 @@ require (
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator/v10 v10.11.0 // indirect
+	github.com/go-sql-driver/mysql v1.7.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/imkira/go-interpol v1.1.0 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/compress v1.15.0 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
@@ -47,5 +53,7 @@ require (
 	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
+	gorm.io/driver/mysql v1.5.1 // indirect
+	gorm.io/gorm v1.25.3 // indirect
 	moul.io/http2curl/v2 v2.3.0 // indirect
 )

@@ -1,4 +1,4 @@
-package controller
+package model
 
 type Response struct {
 	StatusCode int32  `json:"status_code"`
@@ -22,13 +22,13 @@ type Comment struct {
 	CreateDate string `json:"create_date,omitempty"`
 }
 
-type User struct {
-	Id            int64  `json:"id,omitempty"`
-	Name          string `json:"name,omitempty"`
-	FollowCount   int64  `json:"follow_count,omitempty"`
-	FollowerCount int64  `json:"follower_count,omitempty"`
-	IsFollow      bool   `json:"is_follow,omitempty"`
-}
+//type User struct {
+//	Id            int64  `json:"id,omitempty"`
+//	Name          string `json:"name,omitempty"`
+//	FollowCount   int64  `json:"follow_count,omitempty"`
+//	FollowerCount int64  `json:"follower_count,omitempty"`
+//	IsFollow      bool   `json:"is_follow,omitempty"`
+//}
 
 type Message struct {
 	Id         int64  `json:"id,omitempty"`
