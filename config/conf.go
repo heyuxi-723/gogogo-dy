@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/RaymondCode/simple-demo/model"
+	"github.com/RaymondCode/simple-demo/models"
 	"gopkg.in/ini.v1"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -11,7 +11,28 @@ import (
 )
 
 var Cfg *ini.File
-var Config model.Config
+var Config Conf
+
+type Conf struct {
+	Port  string
+	MySql Mysql
+	Jwt   Jwt
+	DB    *gorm.DB
+}
+
+type Mysql struct {
+	DbUser    string `json:db_user`
+	DbName    string `json:db_name`
+	DbPwd     string `json:db_pwd`
+	DbHost    string `json:db_host`
+	DbPort    string `json:db_port`
+	DbCharset string `json:db_charset`
+}
+
+type Jwt struct {
+	Secret string `mapstructure:"secret" json:"secret" yaml:"secret"`
+	JwtTtl int64  `mapstructure:"jwt_ttl" json:"jwt_ttl" yaml:"jwt_ttl"` // token 有效期（秒）
+}
 
 func InitConfig() {
 	var err error
@@ -31,10 +52,12 @@ func InitConfig() {
 
 func loadApp() {
 	Config.Port = Cfg.Section("app").Key("Port").String()
+	Config.Jwt.Secret = Cfg.Section("jwt").Key("secret").String()
+	Config.Jwt.JwtTtl, _ = Cfg.Section("jwt").Key("jwt_ttl").Int64()
 }
 
-func loadMysql() *gorm.DB {
-	Config.MySql = model.Mysql{
+func loadMysql() {
+	Config.MySql = Mysql{
 		DbName:    Cfg.Section("mysql").Key("db_name").String(),
 		DbUser:    Cfg.Section("mysql").Key("db_user").String(),
 		DbPwd:     Cfg.Section("mysql").Key("db_pwd").String(),
@@ -53,7 +76,6 @@ func loadMysql() *gorm.DB {
 	}
 
 	// 数据库表动态迁移
-	DB.AutoMigrate(&model.User{})
-
-	return DB
+	DB.AutoMigrate(&models.User{})
+	Config.DB = DB
 }

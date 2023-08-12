@@ -1,8 +1,9 @@
-package model
+package models
 
-type Response struct {
-	StatusCode int32  `json:"status_code"`
-	StatusMsg  string `json:"status_msg,omitempty"`
+type UserLoginResponse struct {
+	Response
+	UserId int64  `json:"user_id,omitempty"`
+	Token  string `json:"token"`
 }
 
 type Video struct {
@@ -22,13 +23,14 @@ type Comment struct {
 	CreateDate string `json:"create_date,omitempty"`
 }
 
-//type User struct {
-//	Id            int64  `json:"id,omitempty"`
-//	Name          string `json:"name,omitempty"`
-//	FollowCount   int64  `json:"follow_count,omitempty"`
-//	FollowerCount int64  `json:"follower_count,omitempty"`
-//	IsFollow      bool   `json:"is_follow,omitempty"`
-//}
+type User struct {
+	Id              int64  `json:"id,omitempty" gorm:"column:id"`
+	Name            string `json:"name,omitempty" gorm:"column:name"`
+	Password        string `json:"password,omitempty" gorm:"column:password"`
+	Avatar          string `json:"avatar,omitempty" gorm:"column:avatar"`
+	BackgroundImage string `json:"background_image,omitempty" gorm:"column:background_image"`
+	Signature       string `json:"signature,omitempty" gorm:"column:signature"`
+}
 
 type Message struct {
 	Id         int64  `json:"id,omitempty"`

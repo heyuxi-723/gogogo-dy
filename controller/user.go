@@ -1,16 +1,17 @@
 package controller
 
 import (
-	"github.com/RaymondCode/simple-demo/model"
+	"github.com/RaymondCode/simple-demo/models"
+	"github.com/RaymondCode/simple-demo/service"
+	"github.com/RaymondCode/simple-demo/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"sync/atomic"
 )
 
 // usersLoginInfo use map to store user info, and key is username+password for demo
 // user data will be cleared every time the server starts
 // test data: username=zhanglei, password=douyin
-var usersLoginInfo = map[string]model.User{
+var usersLoginInfo = map[string]models.User{
 	"zhangleidouyin": {
 		Id:   1,
 		Name: "zhanglei",
@@ -19,40 +20,39 @@ var usersLoginInfo = map[string]model.User{
 
 var userIdSequence = int64(1)
 
-type UserLoginResponse struct {
-	model.Response
-	UserId int64  `json:"user_id,omitempty"`
-	Token  string `json:"token"`
-}
-
 type UserResponse struct {
-	model.Response
-	User model.User `json:"user"`
+	models.Response
+	User models.User `json:"user"`
 }
 
 func Register(c *gin.Context) {
 	username := c.Query("username")
 	password := c.Query("password")
 
-	token := username + password
-
-	if _, exist := usersLoginInfo[token]; exist {
-		c.JSON(http.StatusOK, UserLoginResponse{
-			Response: model.Response{StatusCode: 1, StatusMsg: "User already exist"},
-		})
-	} else {
-		atomic.AddInt64(&userIdSequence, 1)
-		newUser := model.User{
-			Id:   userIdSequence,
-			Name: username,
-		}
-		usersLoginInfo[token] = newUser
-		c.JSON(http.StatusOK, UserLoginResponse{
-			Response: model.Response{StatusCode: 0},
-			UserId:   userIdSequence,
-			Token:    username + password,
-		})
+	err := utils.ValidateRegister(username, password)
+	if err != nil {
+		models.Fail(c, 1, err.Error())
+		return
 	}
+	newPassword, err := utils.BcryptMake([]byte(password))
+	if err != nil {
+		models.Fail(c, 1, err.Error())
+		return
+	}
+
+	user := &models.User{
+		Name:     username,
+		Password: newPassword,
+	}
+	res := &service.UserLoginResponse{}
+	err = res.Register(user)
+	if err != nil {
+		models.Fail(c, 1, err.Error())
+		return
+	}
+	res.StatusCode = 0
+	res.StatusMsg = "ok"
+	c.JSON(http.StatusOK, res)
 }
 
 func Login(c *gin.Context) {
@@ -62,14 +62,14 @@ func Login(c *gin.Context) {
 	token := username + password
 
 	if user, exist := usersLoginInfo[token]; exist {
-		c.JSON(http.StatusOK, UserLoginResponse{
-			Response: model.Response{StatusCode: 0},
+		c.JSON(http.StatusOK, service.UserLoginResponse{
+			Response: models.Response{StatusCode: 0},
 			UserId:   user.Id,
 			Token:    token,
 		})
 	} else {
-		c.JSON(http.StatusOK, UserLoginResponse{
-			Response: model.Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
+		c.JSON(http.StatusOK, service.UserLoginResponse{
+			Response: models.Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
 		})
 	}
 }
@@ -79,12 +79,12 @@ func UserInfo(c *gin.Context) {
 
 	if user, exist := usersLoginInfo[token]; exist {
 		c.JSON(http.StatusOK, UserResponse{
-			Response: model.Response{StatusCode: 0},
+			Response: models.Response{StatusCode: 0},
 			User:     user,
 		})
 	} else {
 		c.JSON(http.StatusOK, UserResponse{
-			Response: model.Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
+			Response: models.Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
 		})
 	}
 }
