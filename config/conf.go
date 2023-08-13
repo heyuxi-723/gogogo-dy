@@ -1,10 +1,7 @@
 package config
 
 import (
-	"github.com/RaymondCode/simple-demo/models"
 	"gopkg.in/ini.v1"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
 	"log"
 	"os"
 	"path/filepath"
@@ -17,7 +14,6 @@ type Conf struct {
 	Port  string
 	MySql Mysql
 	Jwt   Jwt
-	DB    *gorm.DB
 }
 
 type Mysql struct {
@@ -65,17 +61,4 @@ func loadMysql() {
 		DbPort:    Cfg.Section("mysql").Key("db_port").String(),
 		DbCharset: Cfg.Section("mysql").Key("db_charset").String(),
 	}
-
-	dataSource := Config.MySql.DbUser + ":" + Config.MySql.DbPwd + "@tcp(" + Config.MySql.DbHost + ":" + Config.MySql.DbPort + ")/" + Config.MySql.DbName + "?charset=" + Config.MySql.DbCharset + "&parseTime=true"
-	DB, err := gorm.Open(mysql.Open(dataSource), &gorm.Config{
-		PrepareStmt:            true, //缓存预编译命令
-		SkipDefaultTransaction: true, //禁用默认事务操作
-	})
-	if err != nil {
-		log.Fatalf("Fail to connect DB: %v", err)
-	}
-
-	// 数据库表动态迁移
-	DB.AutoMigrate(&models.User{})
-	Config.DB = DB
 }

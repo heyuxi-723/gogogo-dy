@@ -2,7 +2,7 @@ package utils
 
 import (
 	"errors"
-	"github.com/RaymondCode/simple-demo/service"
+	"github.com/RaymondCode/simple-demo/models"
 	"github.com/go-playground/validator/v10"
 	"regexp"
 )
@@ -34,7 +34,7 @@ func ValidateRegister(username string, password string) error {
 	if password == "" {
 		return errors.New("密码不能为空")
 	}
-	if service.IsUserExistByUsername(username) {
+	if models.IsUserExistByUsername(username) {
 		return errors.New("用户名已经存在")
 	}
 	return nil
