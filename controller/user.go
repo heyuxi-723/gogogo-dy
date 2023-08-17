@@ -5,6 +5,7 @@ import (
 	"github.com/RaymondCode/simple-demo/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 // usersLoginInfo use map to store user info, and key is username+password for demo
@@ -53,17 +54,28 @@ func Login(c *gin.Context) {
 }
 
 func UserInfo(c *gin.Context) {
-	token := c.Query("token")
-	//userId := c.Query("user_id")
-
-	if user, exist := usersLoginInfo[token]; exist {
-		c.JSON(http.StatusOK, UserResponse{
-			Response: models.Response{StatusCode: 0},
-			User:     user,
-		})
-	} else {
-		c.JSON(http.StatusOK, UserResponse{
-			Response: models.Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
-		})
+	//自己的userId
+	myUserId, ok := c.Get("user_id")
+	if !ok {
+		models.Fail(c, 1, "tokne解析出错")
+		return
 	}
+
+	if myUserId, ok = myUserId.(int64); !ok {
+		models.Fail(c, 1, "用户名ID解析出错")
+		return
+	}
+
+	//要查询的userid
+	userId := c.Query("user_id")
+
+	res := &service.UserInfoResponse{}
+	err := res.GetUserInfo(userId, strconv.FormatInt(myUserId.(int64), 10))
+	if err != nil {
+		models.Fail(c, 1, err.Error())
+		return
+	}
+	res.StatusCode = 0
+	res.StatusMsg = "ok"
+	c.JSON(http.StatusOK, res)
 }

@@ -8,6 +8,7 @@ import (
 )
 
 type UserLoginResponse models.UserLoginResponse
+type UserInfoResponse models.UserInfoResponse
 
 func (q *UserLoginResponse) Register(username string, password string) error {
 	err := utils.ValidateRegister(username, password, "register")
@@ -20,8 +21,9 @@ func (q *UserLoginResponse) Register(username string, password string) error {
 	}
 
 	user := &models.User{
-		Name:     username,
-		Password: newPassword,
+		Name:      username,
+		Password:  newPassword,
+		Signature: "这里还什么都没有",
 	}
 
 	err = models.AddUser(user)
@@ -45,7 +47,10 @@ func (q *UserLoginResponse) Login(username string, password string) error {
 		return err
 	}
 
-	user := models.QueryUserLogin(username)
+	user, ok := models.QueryUserLogin(username, "name")
+	if !ok {
+		return errors.New("查询错误")
+	}
 
 	if isChecked := utils.BcryptMakeCheck([]byte(password), user.Password); !isChecked {
 		return errors.New("密码错误，请重试")
@@ -61,5 +66,24 @@ func (q *UserLoginResponse) Login(username string, password string) error {
 	}
 	q.Token = token
 	q.UserId = user.Id
+	return nil
+}
+
+func (q *UserInfoResponse) GetUserInfo(userId string, myUserId string) error {
+	if userId == "" {
+		return errors.New("用户id不能为空")
+	}
+	user, ok := models.QueryUserLogin(userId, "id")
+	if !ok {
+		return errors.New("查询错误")
+	}
+
+	isFollow := models.QueryIsFollow(userId, myUserId)
+	//todo: 加入redis之后 需要返回点赞量等
+	userinfo := &models.UserInfo{
+		IsFollow: isFollow,
+		User:     user,
+	}
+	q.User = *userinfo
 	return nil
 }

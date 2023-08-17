@@ -21,5 +21,5 @@ func InitDb() {
 	}
 
 	// 数据库表动态迁移
-	DB.AutoMigrate(&User{})
+	DB.AutoMigrate(&User{}, &Follow{})
 }

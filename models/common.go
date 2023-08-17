@@ -6,6 +6,11 @@ type UserLoginResponse struct {
 	Token  string `json:"token"`
 }
 
+type UserInfoResponse struct {
+	Response
+	User UserInfo `json:"user,omitempty"`
+}
+
 type Video struct {
 	Id            int64  `json:"id,omitempty"`
 	Author        User   `json:"author"`
