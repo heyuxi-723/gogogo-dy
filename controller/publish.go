@@ -1,11 +1,11 @@
 package controller
 
 import (
-	"fmt"
-	"github.com/RaymondCode/simple-demo/models"
-	"github.com/gin-gonic/gin"
 	"net/http"
-	"path/filepath"
+
+	"github.com/RaymondCode/simple-demo/models"
+	"github.com/RaymondCode/simple-demo/service"
+	"github.com/gin-gonic/gin"
 )
 
 type VideoListResponse struct {
@@ -15,13 +15,18 @@ type VideoListResponse struct {
 
 // Publish check token then save upload file to public directory
 func Publish(c *gin.Context) {
-	token := c.PostForm("token")
 
-	if _, exist := usersLoginInfo[token]; !exist {
-		c.JSON(http.StatusOK, models.Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
+	// 获取发布者信息
+	rawId, ok := c.Get("user_id")
+	if !ok {
+		models.Fail(c, 1, "token解析出错")
 		return
 	}
-
+	authorId, ok := rawId.(int64) //保证id是int64
+	if !ok {
+		models.Fail(c, 1, "user_id不是int64类型")
+		return
+	}
 	data, err := c.FormFile("data")
 	if err != nil {
 		c.JSON(http.StatusOK, models.Response{
@@ -30,22 +35,12 @@ func Publish(c *gin.Context) {
 		})
 		return
 	}
-
-	filename := filepath.Base(data.Filename)
-	user := usersLoginInfo[token]
-	finalName := fmt.Sprintf("%d_%s", user.Id, filename)
-	saveFile := filepath.Join("./public/", finalName)
-	if err := c.SaveUploadedFile(data, saveFile); err != nil {
-		c.JSON(http.StatusOK, models.Response{
-			StatusCode: 1,
-			StatusMsg:  err.Error(),
-		})
-		return
-	}
+	title := c.PostForm("title")
+	service.PublishVideo(c, authorId, data, title)
 
 	c.JSON(http.StatusOK, models.Response{
 		StatusCode: 0,
-		StatusMsg:  finalName + " uploaded successfully",
+		StatusMsg:  title + " uploaded successfully",
 	})
 }
 
