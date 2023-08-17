@@ -24,7 +24,21 @@ func ValidateMobile(fl validator.FieldLevel) bool {
 }
 
 //ValidateRegister
-func ValidateRegister(username string, password string) error {
+func ValidateRegister(username string, password string, key string) error {
+	if err := ValidateNameAndPwd(username, password); err != nil {
+		return err
+	}
+	if models.IsUserExistByUsername(username) && key == "register" {
+		return errors.New("用户名已经存在")
+	}
+	if !models.IsUserExistByUsername(username) && key == "login" {
+		return errors.New("该用户尚未注册")
+	}
+	return nil
+}
+
+//ValidateNameAndPwd
+func ValidateNameAndPwd(username string, password string) error {
 	if username == "" {
 		return errors.New("用户名不能为空")
 	}
@@ -33,9 +47,6 @@ func ValidateRegister(username string, password string) error {
 	}
 	if password == "" {
 		return errors.New("密码不能为空")
-	}
-	if models.IsUserExistByUsername(username) {
-		return errors.New("用户名已经存在")
 	}
 	return nil
 }
