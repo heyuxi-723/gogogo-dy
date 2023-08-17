@@ -13,10 +13,15 @@ func AddUser(user *User) error {
 	return DB.Create(&user).Error
 }
 func IsUserExistByUsername(username string) bool {
-	var user User
-	DB.Where("name = ?", username).First(&user)
+	user := QueryUserLogin(username)
 	if user.Id == 0 {
 		return false
 	}
 	return true
+}
+
+func QueryUserLogin(username string) User {
+	var user User
+	DB.Table("users").Where("name = ?", username).First(&user)
+	return user
 }
