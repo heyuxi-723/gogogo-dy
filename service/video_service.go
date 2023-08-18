@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"github.com/RaymondCode/simple-demo/config"
 	"mime/multipart"
 	"net/http"
 	"path/filepath"
@@ -27,7 +28,7 @@ func PublishVideo(c *gin.Context, authorId int64, data *multipart.FileHeader, ti
 	video := &models.Video{
 		Title:    title,
 		AuthorID: authorId,
-		PlayUrl:  "/static/videos/" + finalName,
+		PlayUrl:  config.Config.Url + "/static/videos/" + finalName,
 		CoverUrl: "",
 	}
 	models.AddVideo(video)
