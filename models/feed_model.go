@@ -12,6 +12,15 @@ func QueryVideoListByLimitAndTime(limit int, latestTime time.Time, videoList *[]
 	}
 	return DB.Model(&Video{}).Where("created_at<?", latestTime).
 		Order("created_at ASC").Limit(limit).
-		Select([]string{"id", "author_id", "play_url", "cover_url", "title", "created_at", "updated_at"}).
-		Find(videoList).Error
+		//Select([]string{"id", "author_id", "play_url", "cover_url", "title", "created_at", "updated_at"}).
+		Preload("Author").Find(videoList).Error
+}
+
+func QueryIsFavorite(videoId int64, userId int64) bool {
+	var favorite Favorite
+	res := DB.Table("favorites").Where("video_id = ? and user_id = ?", videoId, userId).First(&favorite)
+	if res.Error != nil || res.RowsAffected == 0 {
+		return false
+	}
+	return true
 }

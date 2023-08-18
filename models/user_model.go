@@ -15,13 +15,6 @@ type User struct {
 	FavoriteCount   int64  `json:"favorite_count" gorm:"default:0"`
 }
 
-type Follow struct {
-	//关注者
-	FollowUserId int64 `json:"follow_userId,omitempty" gorm:"column:follow_userId"`
-	//被关注者
-	FollowerUserId int64 `json:"follower_userId,omitempty" gorm:"column:follower_userId"`
-}
-
 func AddUser(user *User) error {
 	return DB.Create(&user).Error
 }
@@ -42,7 +35,7 @@ func QueryUserLogin(username string, key string) (User, bool) {
 	return user, true
 }
 
-func QueryIsFollow(userId string, myUserId string) bool {
+func QueryIsFollow(userId int64, myUserId int64) bool {
 	var follow Follow
 	res := DB.Table("follows").Where("follow_userId = ? and follower_userId = ?", myUserId, userId).First(&follow)
 	if res.Error != nil || res.RowsAffected == 0 {

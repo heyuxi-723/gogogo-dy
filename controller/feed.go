@@ -19,6 +19,7 @@ func Feed(c *gin.Context) {
 		err := res.DoNoToken(c)
 		if err != nil {
 			models.Fail(c, 1, err.Error())
+			return
 		}
 
 	} else {
@@ -26,6 +27,7 @@ func Feed(c *gin.Context) {
 		err := res.DoHasToken(token, c)
 		if err != nil {
 			models.Fail(c, 1, err.Error())
+			return
 		}
 	}
 	res.StatusCode = 0

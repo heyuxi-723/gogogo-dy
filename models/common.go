@@ -17,7 +17,6 @@ type FeedResponse struct {
 	NextTime  int64    `json:"next_time,omitempty"`
 }
 
-
 type Message struct {
 	Id         int64  `json:"id,omitempty"`
 	Content    string `json:"content,omitempty"`
@@ -33,4 +32,17 @@ type MessageSendEvent struct {
 type MessagePushEvent struct {
 	FromUserId int64  `json:"user_id,omitempty"`
 	MsgContent string `json:"msg_content,omitempty"`
+}
+
+type Follow struct {
+	//关注者
+	FollowUserId int64 `json:"follow_userId,omitempty" gorm:"column:follow_userId"`
+	//被关注者
+	FollowerUserId int64 `json:"follower_userId,omitempty" gorm:"column:follower_userId"`
+}
+
+// 点赞表
+type Favorite struct {
+	UserId  int64 `json:"user_id" gorm:"column:user_id"`
+	VideoId int64 `json:"video_id,omitempty" gorm:"column:video_id"`
 }

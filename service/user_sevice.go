@@ -78,8 +78,7 @@ func (q *UserInfoResponse) GetUserInfo(userId string, myUserId string) error {
 		return errors.New("查询错误")
 	}
 
-	isFollow := models.QueryIsFollow(userId, myUserId)
-	//todo: 加入redis之后 需要返回点赞量等
+	isFollow := models.QueryIsFollow(utils.StringToInt(userId), utils.StringToInt(myUserId))
 	user.IsFollow = isFollow
 	q.User = user
 	return nil

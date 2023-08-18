@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"gopkg.in/ini.v1"
 	"log"
 	"os"
@@ -11,6 +12,7 @@ var Cfg *ini.File
 var Config Conf
 
 type Conf struct {
+	Url   string
 	Port  string
 	MySql Mysql
 	Jwt   Jwt
@@ -47,18 +49,23 @@ func InitConfig() {
 }
 
 func loadApp() {
-	Config.Port = Cfg.Section("app").Key("Port").String()
-	Config.Jwt.Secret = Cfg.Section("jwt").Key("secret").String()
+	Config.Port = getConfig("app", "port")
+	Config.Url = fmt.Sprintf("%s:%s", getConfig("app", "url"), Config.Port)
+	Config.Jwt.Secret = getConfig("jwt", "secret")
 	Config.Jwt.JwtTtl, _ = Cfg.Section("jwt").Key("jwt_ttl").Int64()
 }
 
 func loadMysql() {
 	Config.MySql = Mysql{
-		DbName:    Cfg.Section("mysql").Key("db_name").String(),
-		DbUser:    Cfg.Section("mysql").Key("db_user").String(),
-		DbPwd:     Cfg.Section("mysql").Key("db_pwd").String(),
-		DbHost:    Cfg.Section("mysql").Key("db_host").String(),
-		DbPort:    Cfg.Section("mysql").Key("db_port").String(),
-		DbCharset: Cfg.Section("mysql").Key("db_charset").String(),
+		DbName:    getConfig("mysql", "db_name"),
+		DbUser:    getConfig("mysql", "db_user"),
+		DbPwd:     getConfig("mysql", "db_pwd"),
+		DbHost:    getConfig("mysql", "db_host"),
+		DbPort:    getConfig("mysql", "db_port"),
+		DbCharset: getConfig("mysql", "db_charset"),
 	}
+}
+
+func getConfig(name string, key string) string {
+	return Cfg.Section(name).Key(key).String()
 }
