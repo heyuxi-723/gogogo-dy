@@ -68,7 +68,7 @@ func getLastTime(c *gin.Context) (latestTime time.Time) {
 	rawTimestamp, ok := c.GetQuery("latest_time")
 	if ok {
 		intTime, err := strconv.ParseInt(rawTimestamp, 10, 64)
-		if err == nil {
+		if err == nil && intTime != 0 {
 			latestTime = time.Unix(0, intTime)
 			return latestTime
 		}
