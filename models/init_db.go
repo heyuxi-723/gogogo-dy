@@ -1,10 +1,11 @@
 package models
 
 import (
+	"log"
+
 	"github.com/RaymondCode/simple-demo/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"log"
 )
 
 var DB *gorm.DB
@@ -21,5 +22,5 @@ func InitDb() {
 	}
 
 	// 数据库表动态迁移
-	DB.AutoMigrate(&User{}, &Video{})
+	DB.AutoMigrate(&User{}, &Video{}, &Comment{})
 }
