@@ -6,6 +6,12 @@ type UserLoginResponse struct {
 	Token  string `json:"token"`
 }
 
+type UserInfoResponse struct {
+	Response
+	User UserInfo `json:"user,omitempty"`
+}
+
+
 type Message struct {
 	Id         int64  `json:"id,omitempty"`
 	Content    string `json:"content,omitempty"`
