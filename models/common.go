@@ -8,7 +8,13 @@ type UserLoginResponse struct {
 
 type UserInfoResponse struct {
 	Response
-	User UserInfo `json:"user,omitempty"`
+	User User `json:"user,omitempty"`
+}
+
+type FeedResponse struct {
+	Response
+	VideoList []*Video `json:"video_list,omitempty"`
+	NextTime  int64    `json:"next_time,omitempty"`
 }
 
 //type Video struct {

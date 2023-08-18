@@ -3,20 +3,16 @@ package models
 type User struct {
 	Id              int64  `json:"id" gorm:"column:id"`
 	Name            string `json:"name" gorm:"column:name"`
-	Password        string `json:"password,omitempty" gorm:"column:password"`
-	Avatar          string `json:"avatar,omitempty" gorm:"column:avatar"`
-	BackgroundImage string `json:"background_image,omitempty" gorm:"column:background_image"`
+	Password        string `json:"-" gorm:"column:password"`
+	Avatar          string `json:"avatar" gorm:"column:avatar"`
+	BackgroundImage string `json:"background_image" gorm:"column:background_image"`
 	Signature       string `json:"signature" gorm:"column:signature"`
-}
-
-type UserInfo struct {
-	User
-	FollowCount    int64  `json:"follow_count,omitempty"`
-	FollowerCount  int64  `json:"follower_count,omitempty"`
-	IsFollow       bool   `json:"is_follow"`
-	TotalFavorited string `json:"total_favorited,omitempty"`
-	WorkCount      int64  `json:"work_count,omitempty"`
-	FavoriteCount  int64  `json:"favorite_count,omitempty"`
+	FollowCount     int64  `json:"follow_count" gorm:"default:0"`
+	FollowerCount   int64  `json:"follower_count" gorm:"default:0"`
+	IsFollow        bool   `json:"is_follow" gorm:"default:false"`
+	TotalFavorited  string `json:"total_favorited" gorm:"default:0"`
+	WorkCount       int64  `json:"work_count" gorm:"default:0"`
+	FavoriteCount   int64  `json:"favorite_count" gorm:"default:0"`
 }
 
 type Follow struct {
@@ -39,11 +35,7 @@ func IsUserExistByUsername(username string) bool {
 
 func QueryUserLogin(username string, key string) (User, bool) {
 	var user User
-	res := DB.Table("users").Where(key+" = ?", username)
-	if key == "id" {
-		res = res.Select("id", "name", "avatar", "background_image", "signature")
-	}
-	res = res.First(&user)
+	res := DB.Table("users").Where(key+" = ?", username).First(&user)
 	if res.Error != nil || res.RowsAffected == 0 {
 		return User{}, false
 	}

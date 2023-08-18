@@ -2,22 +2,34 @@ package controller
 
 import (
 	"github.com/RaymondCode/simple-demo/models"
+	"github.com/RaymondCode/simple-demo/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"time"
 )
-
-type FeedResponse struct {
-	models.Response
-	VideoList []models.Video `json:"video_list,omitempty"`
-	NextTime  int64          `json:"next_time,omitempty"`
-}
 
 // Feed same demo video list for every request
 func Feed(c *gin.Context) {
-	c.JSON(http.StatusOK, FeedResponse{
-		Response:  models.Response{StatusCode: 0},
-		VideoList: DemoVideos,
-		NextTime:  time.Now().Unix(),
-	})
+	// 不会报错
+	token, ok := c.GetQuery("token")
+
+	res := &service.FeedResponse{}
+	res.VideoList = []*models.Video{}
+	//没有token
+	if !ok {
+		err := res.DoNoToken(c)
+		if err != nil {
+			models.Fail(c, 1, err.Error())
+		}
+
+	} else {
+		//有token
+		err := res.DoHasToken(token, c)
+		if err != nil {
+			models.Fail(c, 1, err.Error())
+		}
+	}
+	res.StatusCode = 0
+	res.StatusMsg = "ok"
+	c.JSON(http.StatusOK, res)
+
 }
