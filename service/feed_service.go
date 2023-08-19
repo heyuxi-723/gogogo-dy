@@ -37,11 +37,11 @@ func (f *FeedResponse) DoHasToken(token string, c *gin.Context) error {
 		}
 
 		//如果用户为登录状态，则更新该视频是否被该用户点赞的状态
-		_, err = fillFollowAndFavorite(claim.UserId, &f.VideoList)
+		latestTime, err := fillFollowAndFavorite(claim.UserId, &f.VideoList)
 		if err != nil {
 			return err
 		}
-		f.NextTime = time.Now().Unix()
+		f.NextTime = latestTime.Unix()
 		return nil
 	}
 	return nil
