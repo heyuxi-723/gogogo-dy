@@ -18,3 +18,7 @@ func AddComment(userID int64, videoID int64, text string) *models.Comment {
 func DelComment(commentID int64) error {
 	return models.DelComment(commentID)
 }
+
+func CommentList(videoID int64) {
+
+}
