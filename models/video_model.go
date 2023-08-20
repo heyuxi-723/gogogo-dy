@@ -12,7 +12,7 @@ type Video struct {
 	Title         string    `json:"title" gorm:"column:title"`
 	AuthorID      int64     `json:"-" gorm:"column:author_id"`
 	Author        User      `json:"author" gorm:"foreignKey:AuthorID"`
-	PlayUrl       string    `json:"play_url" gorm:"column:paly_url"`
+	PlayUrl       string    `json:"play_url" gorm:"column:play_url"`
 	CoverUrl      string    `json:"cover_url" gorm:"column:cover_url"`
 	FavoriteCount int64     `json:"favorite_count"`
 	CommentCount  int64     `json:"comment_count"`

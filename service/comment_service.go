@@ -19,6 +19,10 @@ func DelComment(commentID int64) error {
 	return models.DelComment(commentID)
 }
 
-func CommentList(videoID int64) {
-
+func CommentList(videoID int64) (commentList []models.Comment, err error) {
+	err = models.DB.Model(&models.Comment{}).Where("video_id = ?", videoID).Find(&commentList).Error
+	if err != nil {
+		return nil, err
+	}
+	return commentList, nil
 }
