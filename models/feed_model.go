@@ -12,7 +12,6 @@ func QueryVideoListByLimitAndTime(limit int, latestTime time.Time, videoList *[]
 	}
 	return DB.Model(&Video{}).Where("created_at<?", latestTime).
 		Order("created_at DESC").Limit(limit).
-		//Select([]string{"id", "author_id", "play_url", "cover_url", "title", "created_at", "updated_at"}).
 		Preload("Author").Find(videoList).Error
 }
 
